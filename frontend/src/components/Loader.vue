@@ -1,12 +1,14 @@
 <template>
   <div class="loader">
-    <v-progress-circular
+    <v-container fill-height justify-center>
+      <v-progress-circular
       v-show="isLoading"
       :size="70"
       :width="7"
       color="grey darken-4"
       indeterminate
-    ></v-progress-circular>
+      ></v-progress-circular>
+    </v-container>
   </div>
 </template>
 
@@ -28,4 +30,5 @@ export default {
 </script>
 
 <style>
+
 </style>

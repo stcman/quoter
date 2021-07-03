@@ -81,7 +81,7 @@ h1 {
     font-weight: 500;
 }
 
-h1, a {
+h1, a, button {
     font-size: 25px;
     font-family: 'Prompt';
 }

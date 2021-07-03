@@ -73,10 +73,10 @@ unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+
 
 .loader {
 	position: absolute;
-	top: 48%;
-	left: 48%;
-	margin: 0 auto;
+	height: 100%;
+	width: 100%;
 	z-index: 999;
+	pointer-events: none;
 }
 
 /* ++++++++ */
