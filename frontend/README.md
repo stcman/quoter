@@ -1,4 +1,4 @@
-# briq-challenge
+# quoter
 
 ## Project setup
 ```

@@ -24,4 +24,3 @@ pnpm-debug.log*
 
 #general
 /backend/quoter.log
-/backend/quotes.json
