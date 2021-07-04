@@ -6,6 +6,15 @@
         color="red"
         >
             <span>{{globalErrMsg}}</span>
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                text
+                v-bind="attrs"
+                @click="showSnack = false"
+                >
+                Close
+                </v-btn>
+            </template>
         </v-snackbar>
     </div>
 </template>

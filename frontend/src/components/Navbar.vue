@@ -2,7 +2,7 @@
     <nav>
         <v-app-bar app class="teal accent-3">
             <v-row justify="center">
-                <v-toolbar-title class="text-uppercase white--text myToolbar">
+                <v-toolbar-title class="text-uppercase white--text nav-toolbar">
                     <v-icon left class="white--text">mdi-recycle-variant</v-icon>
                     <span class="font-weight-light">Forever</span>
                     <span class="font-weight-medium">Quotes</span>
@@ -22,3 +22,9 @@ export default {
     methods: {}
 }
 </script>
+
+<style scoped>
+    .nav-toolbar {
+        display: flex;
+    }
+</style>
