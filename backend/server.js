@@ -8,6 +8,7 @@ const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
 const unlink = util.promisify(fs.unlink);
 const appendFile = util.promisify(fs.appendFile);
+const app = express();
 
 (async function() {
     await unlink('seen-quotes.json');
@@ -109,13 +110,11 @@ const getRandomQuote = async (res) => {
     let [radomQtData, radomQterror] = await qtRequest(res, 'Failed to get qoute!', {path: '/random', method: 'GET'});
 
     if(!seenQuotesErr && !radomQterror){
-        if(seenQuotes[radomQtData.data._id]) return getRandomQuote(); //if quote already been seen
+        if(seenQuotes[radomQtData.data._id]) return getRandomQuote(); //if quote already been seen, get new quote
         let [saveQtData, saveQtErr] = await saveQt(res, 'Failed to save qoutes!', radomQtData.data);
         if(!saveQtErr) res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
     }
 }
-
-const app = express();
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
@@ -123,17 +122,10 @@ app.listen(PORT, () => {
 
 // Add headers
 app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
-  
-    // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  
-    // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  
-    // Pass to next layer of middleware
+
     next();
 });
 
