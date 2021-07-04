@@ -14,7 +14,7 @@ const appendFile = util.promisify(fs.appendFile);
     await appendFile('quotes.json', '{}');
 })();
 
-const saveQts = async (data) => {
+const saveQts = async (res, errMsg, data) => {
     try {
         let quotes = await readFile('quotes.json');
         let qoutesData = quotes.length ? JSON.parse(quotes) : {};
@@ -24,37 +24,39 @@ const saveQts = async (data) => {
         await writeFile('quotes.json', JSON.stringify(qoutesData));
         return [qoutesData, null];
     } catch (error) {
+        res.status(500).send({status: 'FAIL', message: errMsg});
         return [null, error];
     }
 }  
 
-const getSavedQts = async () => {
+const getSavedQts = async (res, errMsg) => {
     try {
         let data = await readFile('quotes.json');
         data = data.length ? JSON.parse(data) : {};
         return [data, null];
     } catch (error) {
+        res.status(500).send({status: 'FAIL', message: errMsg});
         return [null, error];
     }
 }
 
 const findQuote = async (rating, ratedQuote, res) => {
-    let pageNum = Math.floor(Math.random() * 13);
-    let [quoteData, quoteError] = await qtRequest({path: '/quotes', method: 'GET', params: {page: pageNum, limit: 50}});
-    let quotes = quoteData.data;
-    let candidate = {};
+    let pageNum = Math.floor(Math.random() * 76);
+    let [quoteData, quoteError] = await qtRequest(res, 'Failed to get qoute!', {path: '/quotes', method: 'GET', params: {page: pageNum, limit: 25}});
 
     if(!quoteError){
+        let quotes = quoteData.data;
+        let [savedQuotes, savedQuotesErr] = await getSavedQts(res, 'Failed to get saved qoutes!');
+        if(savedQuotesErr) return;
+        
         for(let i = 0; i < quotes.count; i++){
-
-            let [savedQuotes, savedQuotesErr] = await getSavedQts();
-            if(savedQuotesErr) return res.status(500).send({status: 'FAIL', message: 'Failed to get qoute!'});
 
             //ignore duplicates and quotes that have been seen
             if(ratedQuote._id == quotes.results[i]._id || savedQuotes[quotes.results[i]._id]) continue;
     
-            let [twRequestData, twRequestError] = await twRequest({path: '/', method: 'GET', params: {text1: ratedQuote.content, text2: quotes.results[i].content}});
-            if(twRequestError) return res.status(500).send({status: 'FAIL', message: 'Failed to get qoute!'});
+            let [twRequestData, twRequestError] = await twRequest(res, 'Failed to compare texts', {path: '/', method: 'GET', params: {text1: ratedQuote.content, text2: quotes.results[i].content}});
+            if(twRequestError) return;
+
             let similarityObj = twRequestData.data;
 
             //Similar : > 0.3
@@ -62,29 +64,24 @@ const findQuote = async (rating, ratedQuote, res) => {
             
             if(similarityObj.similarity > 0.3 && rating >= 4 || similarityObj.similarity < 0.1 && rating < 4){
                 logger.info(`Rated Quote: "${ratedQuote.content}" \n New Quote: "${quotes.results[i].content}" \n Similarity Rating: ${similarityObj.similarity}`)
-                res.status(200).send({newQt: quotes.results[i], similarity: similarityObj.similarity, pageNum: pageNum});
-                let [saveQtsData, saveQtsErr] = await saveQts(quotes.results[i]);
-                if(saveQtsErr) res.status(500).send({status: 'FAIL', message: 'Failed to save qoute!'});
+                let [saveQtsData, saveQtsErr] = await saveQts(res, 'Failed to save qoutes!', quotes.results[i]);
+                if(!saveQtsErr) res.status(200).send({responseData: quotes.results[i], similarity: similarityObj.similarity, pageNum: pageNum});
                 return;
-            }else{
-                candidate = quotes.results[i];
             }
         }
 
-        res.send({newQt: candidate}); //new random quote if similarity check fails
+        getRandomQuote(res); //new random quote if similarity check fails
     }
 }
 
 const getRandomQuote = async (res) => {
-    let [savedQuotes, savedQuotesErr] = await getSavedQts();
-    let [radomQtData, radomQterror] = await qtRequest({path: '/random', method: 'GET'});
+    let [savedQuotes, savedQuotesErr] = await getSavedQts(res, 'Failed to get saved qoutes!');
+    let [radomQtData, radomQterror] = await qtRequest(res, 'Failed to get qoute!', {path: '/random', method: 'GET'});
 
     if(!savedQuotesErr && !radomQterror){
-        if(savedQuotes[radomQtData.data._id]) return getRandomQuote(); //if it already exist 
-        res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
-        await saveQts(radomQtData.data);
-    }else{
-        return res.status(500).send({status: 'FAIL', message: 'Failed to get qoute!'});
+        if(savedQuotes[radomQtData.data._id]) return getRandomQuote(); //if quote already been seen
+        let [saveQtsData, saveQtsErr] = await saveQts(res, 'Failed to save qoutes!', radomQtData.data);
+        if(!saveQtsErr) res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
     }
 }
 

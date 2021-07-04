@@ -24,7 +24,7 @@ export default {
         let [qtRequestData, qtRequestError] = await qtRequest(context, "Failed to get new quote!", {path: '/rateQt', method: 'POST', postData: rateData});
 
         if(!qtRequestError){
-          context.commit('updateActiveQuote', qtRequestData.data.newQt);
+          context.commit('updateActiveQuote', qtRequestData.data.responseData);
         }
       }
     },

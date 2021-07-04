@@ -9,7 +9,7 @@ const myFormat = printf(({ level, message, label }) => {
 
 const logger = createLogger({
     format: combine(
-        label({ label: 'Similarity-Compare' }),
+        label({ label: 'QUOTESLOGGER' }),
         timestamp(),
         myFormat
     ),

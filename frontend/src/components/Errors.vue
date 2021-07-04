@@ -29,7 +29,7 @@ export default {
                 return this.$store.state.globalModule.showSnack;
             },
             set(v) {
-                this.$store.commit('globalModule/updateShowSnack', v)
+                this.$store.commit('globalModule/updateShowSnack', v);
             }
         }
     },
