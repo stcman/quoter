@@ -99,7 +99,7 @@ a {
     height: 100%;
 }
 
-.qouteInfo {
+.qtSections {
     padding: 60px 0;
 }
 
