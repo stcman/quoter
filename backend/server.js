@@ -3,6 +3,9 @@ const PORT = process.env.PORT || 5000;
 const {logger} = require('./common/logger');
 const {qtRequest, twRequest} = require('./common/requests');
 const app = express();
+let server = app.listen(PORT, () => {
+    console.log(`Server listening on ${PORT}`);
+});
 
 let seenQuotes = {};
 let cachedResults = {};
@@ -10,7 +13,7 @@ let qtsPerPage = 25;
 
 (async function(){
     let [quoteData, quoteError] = await qtRequest("", "", {path: '/quotes', method: 'GET', params: {page: 1, limit: qtsPerPage}});
-    if(quoteError) console.error('Could not request quotable.io. Please check your connection or try again later...');
+    if(quoteError) server.close(() => console.error('Could not request quotable.io. Please check your connection or try again later...'));
     else cachedResults[1] = quoteData.data;
 })();
 
@@ -62,10 +65,6 @@ const getRandomQuote = async (res) => {
         res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
     }
 }
-
-app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
-});
 
 // Add headers
 app.use(function (req, res, next) {
