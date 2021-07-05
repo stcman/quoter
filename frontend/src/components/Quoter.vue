@@ -5,7 +5,7 @@
             <v-row wrap align="center">
                 <v-col cols="12" sm="12" md="8" class="px-5 myQuote qtSections" align="center">
                     <v-icon color="primary" size="50">mdi-format-quote-open</v-icon>
-                    <p class="ma-5 primary--text">{{activeQuote.content}}</p>
+                    <p class="primary--text">{{activeQuote.content}}</p>
                 </v-col>
                 <v-col cols="12" sm="12" md="4" class="px-5 white--text teal accent-3 qouteInfo qtSections" align="center">
                     <h1 class="mb-5 .text-md-subtitle-1'">Rate this quote by</h1>
@@ -75,6 +75,7 @@ export default {
 p {
     font-size: 1.5em;
     font-family: 'Yellowtail';
+    margin: 5px;
 }
 
 h1 {
