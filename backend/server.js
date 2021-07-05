@@ -40,7 +40,7 @@ const findQuote = async (res, rating, ratedQuote) => {
             
             if(similarityObj.similarity > 0.3 && rating >= 4 || similarityObj.similarity < 0.1 && rating < 4){
                 logger.info(`Rated Quote: "${ratedQuote.content}" \n New Quote: "${quotes.results[i].content}" \n Similarity Rating: ${similarityObj.similarity}`)
-                seenQuotes[quotes.results[i]._id] = "seen";
+                seenQuotes[quotes.results[i]._id] = true;
                 res.status(200).send({responseData: quotes.results[i], similarity: similarityObj.similarity, pageNum: pageNum});
                 return;
             }
@@ -58,7 +58,7 @@ const getRandomQuote = async (res) => {
     let [radomQtData, radomQterror] = await qtRequest(res, 'Failed to get qoute!', {path: '/random', method: 'GET'});
     if(!radomQterror){
         if(seenQuotes[radomQtData.data._id]) return getRandomQuote(res); //if quote already been seen, get new quote
-        seenQuotes[radomQtData.data._id] = "seen";
+        seenQuotes[radomQtData.data._id] = true;
         res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
     }
 }
