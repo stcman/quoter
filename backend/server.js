@@ -50,7 +50,7 @@ const getRandomQuote = async (res) => {
     let [radomQtData, radomQterror] = await qtRequest(res, 'Failed to get qoute!', {path: '/random', method: 'GET'});
 
     if(!radomQterror){
-        if(seenQuotes[radomQtData.data._id]) return getRandomQuote(); //if quote already been seen, get new quote
+        if(seenQuotes[radomQtData.data._id]) return getRandomQuote(res); //if quote already been seen, get new quote
         seenQuotes[radomQtData.data._id] = "seen";
         res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
     }
