@@ -48,7 +48,7 @@ export default {
         if(this.rating > 0){
             let rateObj = {
                 rating: this.rating,
-                qtData: this.activeQuote
+                ratedQt: this.activeQuote
             };
         
             this.$store.dispatch('quotesModule/rateQuote', rateObj);

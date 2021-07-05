@@ -8,7 +8,7 @@ let seenQuotes = {};
 let cachedResults = {};
 
 const findQuote = async (res, rating, ratedQuote) => {
-    //if we don't know page limit yet, start at 1
+    //if we don't know page limit yet for 25 quotes per page, start at 1. After that, select random page
     let pageNum = cachedResults[1] ? Math.floor(Math.random() * cachedResults[1].totalPages) : 1;
     
     //if we don't find cached results for page
@@ -51,7 +51,7 @@ const getRandomQuote = async (res) => {
 
     if(!radomQterror){
         if(seenQuotes[radomQtData.data._id]) return getRandomQuote(); //if quote already been seen, get new quote
-        seenQuotes[radomQtData.data._id] = radomQtData.data;
+        seenQuotes[radomQtData.data._id] = "seen";
         res.status(200).send({status: 'SUCCESS', responseData: radomQtData.data});
     }
 }
@@ -76,8 +76,8 @@ app.get('/randomQt', async (req, res) => {
 })
 
 app.post('/rateQt', async (req, res) => {
-    const {rating, qtData} = req.body;
-    findQuote(res, rating, qtData);
+    const {rating, ratedQt} = req.body;
+    findQuote(res, rating, ratedQt);
 })
 
 app.use((req, res) => {
