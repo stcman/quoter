@@ -6,18 +6,24 @@ const app = express();
 
 let seenQuotes = {};
 let cachedResults = {};
+let qtsPerPage = 25;
+
+(async function(){
+    let [quoteData, quoteError] = await qtRequest("", "", {path: '/quotes', method: 'GET', params: {page: 1, limit: qtsPerPage}});
+    if(quoteError) console.error('Could not request quotable.io. Please check your connection or try again later...');
+    else cachedResults[1] = quoteData.data;
+})();
 
 const findQuote = async (res, rating, ratedQuote) => {
-    //if we don't know page limit yet for 25 quotes per page, start at 1. After that, select random page
-    let pageNum = cachedResults[1] ? Math.floor(Math.random() * cachedResults[1].totalPages) : 1;
+    let pageNum = Math.floor(Math.random() * cachedResults[1].totalPages);
     
-    //if we don't find cached results for page
-    let [quoteData, quoteError] = cachedResults[pageNum] === undefined ? await qtRequest(res, 'Failed to get qoute!', {path: '/quotes', method: 'GET', params: {page: pageNum, limit: 25}}) : [null, null];
+    //if we don't find cached results for page#, go get a new page
+    let [quoteData, quoteError] = cachedResults[pageNum] === undefined ? await qtRequest(res, 'Failed to get qoute!', {path: '/quotes', method: 'GET', params: {page: pageNum, limit: qtsPerPage}}) : [null, null];
 
     if(!quoteError){
         let quotes = cachedResults[pageNum] || quoteData.data;
         
-        //run if page not already cached
+        //cache results if results for this page not already cached
         if(!cachedResults[pageNum]) cachedResults[pageNum] = quotes;
         
         for(let i = 0; i < quotes.count; i++){
@@ -47,6 +53,9 @@ const findQuote = async (res, rating, ratedQuote) => {
 }
 
 const getRandomQuote = async (res) => {
+    let allQtsCount = cachedResults[1].totalCount;
+    if(Object.keys(seenQuotes).length == allQtsCount) return res.status(500).send({status: 'FAIL', message: 'No more new quotes!'});
+
     let [radomQtData, radomQterror] = await qtRequest(res, 'Failed to get qoute!', {path: '/random', method: 'GET'});
 
     if(!radomQterror){

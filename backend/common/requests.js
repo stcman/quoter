@@ -17,7 +17,7 @@ const qtRequest = async (res, errMsg, {path, method, params, postData}) => {
         const data = await qoutesApi({method: method, url: `${path}`, params, data: postData});
         return [data, null];
     }catch(error){
-        res.status(500).send({status: 'FAIL', message: errMsg});
+        if(res) res.status(500).send({status: 'FAIL', message: errMsg});
         return [null, error];
     }
 }
@@ -27,7 +27,7 @@ const twRequest = async (res, errMsg, {path, method, params, postData}) => {
         const data = await twinWrdApi({method: method, url: `${path}`, params, data: postData});
         return [data, null];
     }catch(error){
-        res.status(500).send({status: 'FAIL', message: errMsg});
+        if(res) res.status(500).send({status: 'FAIL', message: errMsg});
         return [null, error];
     }
 }
