@@ -8,7 +8,7 @@ export const qtRequest = async (context, errMsg, {path, method, params, postData
   // { root: true } necessary to access other modules
   context.commit('globalModule/updateIsLoading', true, { root: true });
   try{
-      const data = await qoutesApi({method: method, url: `${path}`, params, data: postData});
+      const data = await qoutesApi({method, url: `${path}`, params, data: postData});
       context.commit('globalModule/updateIsLoading', false, { root: true });
       return [data, null];
   }catch(error){

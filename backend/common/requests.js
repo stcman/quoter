@@ -14,7 +14,7 @@ const twinWrdApi = axios.create({
 
 const qtRequest = async (res, errMsg, {path, method, params, postData}) => {
     try{
-        const data = await qoutesApi({method: method, url: `${path}`, params, data: postData});
+        const data = await qoutesApi({method, url: `${path}`, params, data: postData});
         return [data, null];
     }catch(error){
         if(res) res.status(500).send({status: 'FAIL', message: errMsg});
@@ -24,7 +24,7 @@ const qtRequest = async (res, errMsg, {path, method, params, postData}) => {
 
 const twRequest = async (res, errMsg, {path, method, params, postData}) => {
     try{
-        const data = await twinWrdApi({method: method, url: `${path}`, params, data: postData});
+        const data = await twinWrdApi({method, url: `${path}`, params, data: postData});
         return [data, null];
     }catch(error){
         if(res) res.status(500).send({status: 'FAIL', message: errMsg});

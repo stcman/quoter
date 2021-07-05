@@ -1,4 +1,4 @@
-import {qtRequest} from './common';
+import {qtRequest} from '../common';
 
 export default {
     strict: true,

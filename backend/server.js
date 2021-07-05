@@ -33,7 +33,6 @@ const findQuote = async (res, rating, ratedQuote) => {
 
             let [twRequestData, twRequestError] = await twRequest(res, 'Failed to compare texts', {path: '/', method: 'GET', params: {text1: ratedQuote.content, text2: quotes.results[i].content}});
             if(twRequestError) return;
-
             let similarityObj = twRequestData.data;
 
             //Similar : > 0.3
@@ -57,7 +56,6 @@ const getRandomQuote = async (res) => {
     if(Object.keys(seenQuotes).length == allQtsCount) return res.status(500).send({status: 'FAIL', message: 'No more new quotes!'});
 
     let [radomQtData, radomQterror] = await qtRequest(res, 'Failed to get qoute!', {path: '/random', method: 'GET'});
-
     if(!radomQterror){
         if(seenQuotes[radomQtData.data._id]) return getRandomQuote(res); //if quote already been seen, get new quote
         seenQuotes[radomQtData.data._id] = "seen";

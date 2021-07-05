@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import quotesModule from './quotesModule';
-import globalModule from './globalModule';
+import quotesModule from './modules/quotesModule';
+import globalModule from './modules/globalModule';
 
 Vue.use(Vuex)
 
